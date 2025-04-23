@@ -332,7 +332,7 @@ macro_rules! __init_cycle_varss_name_check {
 			}else {
 
 			}
-		}
+		);
 
 		$crate::__init_cycle_varss_name_check! {
 			[ $({$next_expr}),* ]: $i
