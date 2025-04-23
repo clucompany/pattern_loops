@@ -216,7 +216,10 @@ macro_rules! init_cycle_vars {
 	] => {
 
 		$crate::__init_cycle_vars_init! {
-			{ $($all)* }  [$($($i_next)*)?] {$([$($i)*]),*} : [$($($e_next)+)?] {$([$($e)+]),*}
+			{
+				$($all)*
+			}
+			[$($($i_next)*)?] {$([$($i)*]),*} : [$($($e_next)+)?] {$([$($e)+]),*}
 		}
 	};
 }
