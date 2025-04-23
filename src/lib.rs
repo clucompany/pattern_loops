@@ -38,7 +38,7 @@
 // #Ulin Project 1819 2025
 
 /*!
-Convenient macros for combining cycles (for, while) with a match.
+Macros for creating expressive loops with pattern matching.
 
 
 # Full use
@@ -290,23 +290,39 @@ macro_rules! __init_cycle_vars_init {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __init_cycle_varss_name_check {
-	[ []: $($__ignore:tt)* ] => {}; //break
+	[
+		[]: $($__ignore:tt)*
+	] => {}; //break
 
-	[ [ {$self_name:ident}  $(, {$next_expr:ident} )* ]:  $i:ident ] => {{
+	[
+		[ {$self_name:ident}  $(, {$next_expr:ident} )* ]:  $i:ident
+	] => {{
 		macro_rules! __check_ident_equality {
-			[ ({$self_name} : {$self_name}) -> $ok:block ] => {$ok};
-			[ ({$i} : {$i}) -> $ok:block ] => {$ok};
+			[
+				if_ident(#{$i} && #{$i}) $ok:block else $err:block
+			] => {$ok};
+			[
+				if_ident(#{$i} && #{$i}) $ok:block
+			] => {$ok};
 
-			[ ({$self_name} : {$self_name}) -> $ok:block else $err:block ] => {$ok};
-			[ ({$i} : {$i}) -> $ok:block else $err:block ] => {$ok};
+			[
+				if_ident(#{$self_name} && #{$self_name}) $ok:block else $err:block
+			] => {$ok};
+			[
+				if_ident(#{$self_name} && #{$self_name}) $ok:block
+			] => {$ok};
 
 
-			[ ({$self_name} : {$uunk:tt}) -> $ok:block ] => {};
-			[ ({$self_name} : {$uunk:tt}) -> $ok:block else $err:block ] => {$err};
+			[
+				if_ident(#{$self_name} && #{$uunk:tt}) $ok:block
+			] => {};
+			[
+				if_ident(#{$self_name} && #{$uunk:tt}) $ok:block else $err:block
+			] => {$err};
 		}
 
-		__check_ident_equality! {
-			({$self_name} : {$i}) -> {
+		__check_ident_equality!(
+			if_ident(#{$self_name} && #{$i}) {
 				compile_error!(
 					concat!(
 						"Name conflict, possibly undefined behavior. Call the variable \"",
