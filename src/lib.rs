@@ -210,9 +210,9 @@ macro_rules! init_cycle_vars {
 	] => {};
 
 	[
-		{ $($all:tt)* } 
-		{ $([$($i_next:tt)+])? $(, [$($i:tt)+])* } 
-		{ $([$($e_next:tt)+])? $(, [$($e:tt)+])* } 
+		{ $($all:tt)* }
+		{ $([$($i_next:tt)+])? $(, [$($i:tt)+])* }
+		{ $([$($e_next:tt)+])? $(, [$($e:tt)+])* }
 	] => {
 
 		$crate::__init_cycle_vars_init! {
@@ -224,10 +224,14 @@ macro_rules! init_cycle_vars {
 #[doc(hidden)]
 #[macro_export]
 macro_rules! __init_cycle_vars_init {
-	[ {$($all_tt:tt)*} [] {} : [] {}] => {}; //break, empty variables
+	[
+		{$($all_tt:tt)*} [] {} : [] {}
+	] => {}; //break, empty variables
 
 	//error  let _ = $e;
-	[ {$($all_tt:tt)*} [] {$($unk_i:tt)*} : [ $($e:tt)+ ] ] => {
+	[
+		{$($all_tt:tt)*} [] {$($unk_i:tt)*} : [ $($e:tt)+ ]
+	] => {
 		//#0
 		compile_error!(
 			concat!(
@@ -238,7 +242,9 @@ macro_rules! __init_cycle_vars_init {
 	};
 
 	//error  let e = _;
-	[ {$($all_tt:tt)*} [ $($i2:tt)+ ] {$($unk_i:tt)*} : [] ] => {
+	[
+		{$($all_tt:tt)*} [ $($i2:tt)+ ] {$($unk_i:tt)*} : []
+	] => {
 		compile_error!(
 			concat!(
 				"For the name \"", stringify!($($i2)+) ,"\", an expression in (...) was expected, but this was not done. (You can specify an expression, or remove the extra name in | ... |)
@@ -247,10 +253,10 @@ macro_rules! __init_cycle_vars_init {
 		);
 	};
 
-	[	{$($all_tt:tt)*}
+	[
+		{$($all_tt:tt)*}
 
 		[ _ ] {$([$($next_i:tt)*])? $(, [$($unk_i:tt)*])*} : [ $($e:tt)+ ] { $([$($next_e:tt)*])? $(, [$($unk_e:tt)*])* }
-
 	] => {
 		{ $($e)+ };
 
@@ -264,7 +270,8 @@ macro_rules! __init_cycle_vars_init {
 
 
 	//fn next
-	[ 	{ $( [$($check:tt)*] )? }
+	[
+		{ $( [$($check:tt)*] )? }
 
 		[ $i:ident ] {$([$($next_i:tt)*])? $(, [$($unk_i:tt)*])*} : [ $($e:tt)+ ] { $([$($next_e:tt)*])? $(, [$($unk_e:tt)*])* }
 
