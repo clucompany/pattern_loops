@@ -121,7 +121,6 @@ fn main() {
 #![allow(clippy::tabs_in_doc_comments)]
 #![allow(clippy::needless_doctest_main)]
 
-mod while_match;
 mod for_match;
 mod loop_match;
 mod while_match;
