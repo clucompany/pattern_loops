@@ -31,4 +31,3 @@ fn for_match_2() {
 
 	assert_eq!(data_n_index, 525);
 }
-
