@@ -46,15 +46,13 @@ Macros for creating expressive loops with pattern matching.
 Purpose: To read lines from a file ignoring comments and special characters using macros (for_match, while_match).
 
 ```rust
-#[macro_use]
-extern crate cycle_match;
-
+use pattern_loops::{for_match, while_match};
 use std::io::Read;
 
 fn main() -> Result<(), std:: io::Error> {
 	let mut read_buffer = [0u8; 128];
 	let mut buffer = Vec::with_capacity(130);
-	let mut file = std::fs::File::open("./read.txt")?;
+	let mut file = std::fs::File::open("./examples/read_file.txt")?;
 
 	while_match!((file.read(&mut read_buffer)) -> || {
 		Ok(0) => break,
@@ -94,8 +92,7 @@ fn main() -> Result<(), std:: io::Error> {
 Purpose: Convert characters to a digital sequence using a macro while_math.
 
 ```rust
-#[macro_use]
-extern crate cycle_match;
+use pattern_loops::while_match;
 
 fn main() {
 	let data = b"123456789";

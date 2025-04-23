@@ -1,9 +1,7 @@
 /// [DOC IS ATTACHED!] The `For` loop, combined with matching.
 /// # Full use
 /// ```rust
-///
-///#[macro_use]
-///extern crate cycle_match;
+///use pattern_loops::for_match;
 ///fn main() {
 ///	let data = "12345678901";
 ///
