@@ -118,7 +118,9 @@ macro_rules! build_loop_match {
 		}
 
 		$($prefix:)? loop {
-			$crate::cycle_match!(@loop ($a): $($data)*);
+			match $a {
+				$($data)*
+			}
 		}
 	};
 	[
@@ -134,7 +136,9 @@ macro_rules! build_loop_match {
 		}
 
 		$($prefix:)? loop {
-			$crate::cycle_match!(@loop ($a): $($data)*);
+			match $a {
+				$($data)*
+			}
 		}
 	};
 }

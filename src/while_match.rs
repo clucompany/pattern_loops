@@ -190,7 +190,9 @@ macro_rules! build_while_match {
 
 		$($prefix:)? loop {
 			$a = core::iter::Iterator::next(&mut $iter);
-			$crate::cycle_match!(@while ($a): $($data)*);
+			match $a {
+				$($data)*
+			}
 		}
 	};
 
@@ -211,7 +213,9 @@ macro_rules! build_while_match {
 
 		$($prefix:)? loop {
 			$a = $iter;
-			$crate::cycle_match!(@while ($a): $($data)*);
+			match $a {
+				$($data)*
+			}
 		}
 	};
 }
