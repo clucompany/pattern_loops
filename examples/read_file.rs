@@ -1,4 +1,3 @@
-use std::{fs::File, io::Read};
 use pattern_loops::{for_match, while_match};
 use std::{
 	fs::File,
