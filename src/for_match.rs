@@ -219,7 +219,10 @@ macro_rules! build_for_match {
 
 		$($prefix:)? loop {
 			$a = core::iter::Iterator::next(&mut $iter_name);
-			$crate::cycle_match!(@for ($a): $($data)*);
+			
+			match $a {
+				$($data)*
+			}
 		}
 	};
 	[//iter ident
@@ -242,7 +245,10 @@ macro_rules! build_for_match {
 
 		$($prefix:)? loop {
 			$a = core::iter::Iterator::next(&mut $iter_name);
-			$crate::cycle_match!(@for ($a): $($data)*);
+			
+			match $a {
+				$($data)*
+			}
 		}
 	};
 }
