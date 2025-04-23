@@ -55,7 +55,7 @@ Purpose: Convert characters to a digital sequence using a macro while_math.
 
 ```rust
 #[macro_use]
-extern crate cycle_match;
+extern crate pattern_loops;
 
 fn main() {
 	let data = b"123456789";
