@@ -1,12 +1,10 @@
-
-#[macro_use]
-extern crate cycle_match;
+use pattern_loops::for_match;
 
 fn main() {
 	let data = "12345678901";
-	
+
 	let mut a;
-	let result = for_match!(@'begin (data.as_bytes().into_iter(), a, 0usize) -> |iter, num| {
+	let result = for_match!(@'begin (data.as_bytes().iter(), a, 0usize) -> |iter, num| {
 		Some(b'0') => {},
 		Some(b'1') => num += 1,
 		Some(b'2') => num += 2,
@@ -20,7 +18,7 @@ fn main() {
 		Some(a) => panic!("Unk byte '{:?}'", a),
 		_ => break 'begin num,
 	});
-	
+
 	assert_eq!(a, Some(&b'9'));
 	assert_eq!(result, 36);
 }

@@ -1,15 +1,15 @@
 [package]
-name = "cycle_match"
-version = "0.1.9"
+name = "pattern_loops"
+version = "0.2.0"
 authors = ["Denis Kotlyarov (Денис Котляров) <denis2005991@gmail.com>"]
-repository = "https://github.com/clucompany/Cycle_match.git"
-homepage = "https://crates.io/crates/cycle_match"
-license = "MIT/Apache-2.0"
+repository = "https://github.com/clucompany/pattern_loops.git"
+homepage = "https://crates.io/crates/pattern_loops"
+license = "MIT | Apache-2.0"
 readme = "README.md"
-edition = "2018"
+edition = "2024"
 
-description = "Convenient macros for combining cycles (for, while, loop) with a match."
-keywords = ["macro", "while-match-macro", "for-match-macro", "no_std", "clucompany"]
-categories = ["development-tools"]
+description = "Macros for creating expressive loops with pattern matching."
+keywords = ["macros", "pattern matching", "loops", "iteration", "no_std", "clucompany"]
+categories = ["development-tools", "macros"]
 
 [dependencies]

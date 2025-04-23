@@ -1,9 +1,6 @@
-
-#[macro_use]
-extern crate cycle_match;
+use pattern_loops::{for_match, loop_match, while_match};
 
 fn main() {
-	
 	let data = "
 	
 	/*
@@ -30,34 +27,32 @@ fn main() {
 	# https://en.wikipedia.org/wiki/Wikipedia 
 	// 17.11.19 15:06 (+03)
 ";
-	
+
 	let mut q_comments = 0;
-	
+
 	let mut q_special_utf8 = 0;
-	
+
 	let mut q_points = 0;
 	let mut q_commas = 0;
 	let mut q_spaces = 0;
-	
-	
+
 	let mut q_russian_utf8 = 0;
 	let mut q_russian_big_utf8 = 0;
 	let mut q_russian_small_utf8 = 0;
-	
-	
+
 	let mut q_engl_utf8 = 0;
 	let mut q_engl_big_utf8 = 0;
 	let mut q_engl_small_utf8 = 0;
-	
+
 	let mut q_numbers = 0;
-	
-	for_match!(@'decoder (data.chars(), let mut a) -> |iter| {
+
+	for_match!(@'main_loop (data.chars(), let mut a) -> |iter| {
 		Some(' ') => q_spaces += 1,
 		Some(',') => q_commas += 1,
 		Some('.') => q_points += 1,
-		
+
 		Some('\n') | Some('\t') => q_special_utf8 += 1,
-		
+
 		Some('0' ..= '9') => q_numbers += 1,
 		Some('А' ..= 'Я') | Some('Ё') => {
 			q_russian_utf8 += 1;
@@ -67,8 +62,8 @@ fn main() {
 			q_russian_utf8 += 1;
 			q_russian_small_utf8 += 1;
 		},
-		
-		
+
+
 		Some('A' ..= 'Z') => {
 			q_engl_utf8 += 1;
 			q_engl_big_utf8 += 1;
@@ -77,44 +72,44 @@ fn main() {
 			q_engl_utf8 += 1;
 			q_engl_small_utf8 += 1;
 		},
-		
+
 		Some('#') => while_match!((iter, a, q_comments += 1) -> |_| {
-			Some('\n') => continue 'decoder,
+			Some('\n') => continue 'main_loop,
 			Some(_a) => {},
-			_ => break 'decoder,
+			_ => break 'main_loop,
 		}),
 		Some('/') => match iter.next() {
 			//a = iter.next, At start!!
-			Some('*') => loop_match!(@'decode_a (a, a = iter.next(), q_comments += 1) -> |_, _| {
+			Some('*') => loop_match!(@'comment_loop (a, a = iter.next(), q_comments += 1) -> |_, _| {
 				Some('*') => match iter.next() {
-					Some('/') => continue 'decoder,
+					Some('/') => continue 'main_loop,
 					Some(_a) => {
 						a = iter.next();
-						continue 'decode_a;
+						continue 'comment_loop;
 					},
 					_ => panic!("The symbol '/' was expected. "),
 				},
-				Some(_a) => {
+				Some(..) => {
 					a = iter.next();
-					continue 'decode_a;
+					continue 'comment_loop;
 				},
 				_ => panic!("The symbol '*' was expected. "),
 			}),
-			
+
 			Some('/') => while_match!((iter, a, q_comments += 1) -> |_| {
-				Some('\n') => continue 'decoder,
+				Some('\n') => continue 'main_loop,
 				Some(_a) => {},
-				_ => break 'decoder,
+				_ => break 'main_loop,
 			}),
-			
+
 			_ => panic!("The symbol '*' was expected. "),
 		},
-		
-		//Some(a) => panic!("Unk symbol '{}'", a),
-		Some(_a) => {},
+
+		//Some(..) => panic!("Unknown symbol '{}'", a),
+		Some(..) => {},
 		_ => break,
 	});
-	
+
 	println!(
 		"---------
 q_comments:	{}
@@ -133,23 +128,17 @@ q_engl:		{}
 q_engl_big:		{}
 q_engl_small:	{}
 ---------",
-		
 		q_comments,
 		q_special_utf8,
-		
 		q_points,
 		q_commas,
 		q_spaces,
-		
 		q_numbers,
-		
 		q_russian_utf8,
 		q_russian_big_utf8,
 		q_russian_small_utf8,
-		
 		q_engl_utf8,
 		q_engl_big_utf8,
 		q_engl_small_utf8,
 	);
 }
-

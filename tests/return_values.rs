@@ -1,5 +1,4 @@
-#[macro_use]
-extern crate cycle_match;
+use pattern_loops::{for_match, loop_match, while_match};
 
 #[test]
 fn return_values() {
@@ -17,15 +16,14 @@ fn return_values() {
 	});
 	assert_eq!(index, 1);
 	assert_eq!(loop_match, 256);
-	
-	
+
 	let for_match = for_match!((0..=15, let mut a, 255) -> |_, data| {
 		Some(15) => break data,
 		Some(_num) => data += 1,
 		_ => break data,
 	});
 	assert_eq!(for_match, 270);
-	
+
 	let mut iter = 0..=15;
 	let while_match = while_match!((iter.next(), let mut a, 255) -> |data| {
 		Some(15) => break data,

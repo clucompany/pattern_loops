@@ -1,5 +1,3 @@
-
-
 /// [DOC IS ATTACHED!] The `For` loop, combined with matching.
 #[macro_export]
 macro_rules! loop_match {
@@ -27,10 +25,10 @@ Expected (3): (a.next(), 1024, ...) -> |my_usize, ...| -> ...
 "
 		)
 	}};
-	
-	
+
+
 	[ $(@$prefix:tt)?		($($args:tt)*) -> || { $($data:tt)* } ] => {{
-		$crate::loop_match_begin! {
+		$crate::build_loop_match! {
 			(
 				[$($prefix)?]
 				[$($args)*]
@@ -40,9 +38,9 @@ Expected (3): (a.next(), 1024, ...) -> |my_usize, ...| -> ...
 			}
 		}
 	}};
-	
+
 	[ $(@$prefix:tt)?		($($args:tt)*) -> |$($nn_i:tt),*| { $($data:tt)* } ] => {{
-		$crate::loop_match_begin! {
+		$crate::build_loop_match! {
 			(
 				[$($prefix)?]
 				[$($args)*]
@@ -52,7 +50,7 @@ Expected (3): (a.next(), 1024, ...) -> |my_usize, ...| -> ...
 			}
 		}
 	}};
-	
+
 	[ $($tt:tt)* ] => {{
 		compile_error! (
 			concat!(
@@ -104,42 +102,39 @@ Expected (2, Full version):
 	}};
 }
 
-
 #[doc(hidden)]
 #[macro_export]
-macro_rules! loop_match_begin {
-	[	
+macro_rules! build_loop_match {
+	[
 		([$($prefix:tt)?][ $a:expr $(, $nn_e:expr)* $(,)? ][$($nn_i:tt),*] $(,)?) {
 			$($data:tt)*
 		}
 	] => {
-		$crate::cycle_variables! {
+		$crate::init_cycle_vars! {
 			{}
-			
+
 			{ $([$nn_i]),* }
 			{ $([$nn_e]),* }
 		}
-		
+
 		$($prefix:)? loop {
 			$crate::cycle_match!(@loop ($a): $($data)*);
 		}
 	};
-	[	
+	[
 		([$($prefix:tt)?][ $a:ident $(, $nn_e:expr)* $(,)? ][$($nn_i:tt),*] $(,)?) {
 			$($data:tt)*
 		}
 	] => {
-		$crate::cycle_variables! {
+		$crate::init_cycle_vars! {
 			{ [{$a}] }
-			
+
 			{ $([$nn_i]),* }
 			{ $([$nn_e]),* }
 		}
-		
+
 		$($prefix:)? loop {
 			$crate::cycle_match!(@loop ($a): $($data)*);
 		}
 	};
 }
-
-

@@ -1,4 +1,4 @@
-# Cycle_match
+# cycle_match
 
 Convenient macros for combining cycles (for, while, loop) with a match.
 

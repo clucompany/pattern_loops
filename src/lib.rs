@@ -1,4 +1,4 @@
-//Copyright (c) 2019 #UlinProject Denis Kotlyarov (Денис Котляров)
+//Copyright (c) 2019-2025 #UlinProject Denis Kotlyarov (Денис Котляров)
 
 //-----------------------------------------------------------------------------
 //Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,7 +35,7 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
-// #Ulin Project 1819
+// #Ulin Project 1819 2025
 
 /*!
 Convenient macros for combining cycles (for, while) with a match.
@@ -55,12 +55,12 @@ fn main() -> Result<(), std:: io::Error> {
 	let mut read_buffer = [0u8; 128];
 	let mut buffer = Vec::with_capacity(130);
 	let mut file = std::fs::File::open("./read.txt")?;
-	
+
 	while_match!((file.read(&mut read_buffer)) -> || {
 		Ok(0) => break,
 		Ok(len) => {
 			let real_array = &read_buffer[..len];
-			
+
 			for_match!(@'read (real_array.into_iter()) -> |iter| {
 				Some(13u8) => continue,
 				Some(b'\n') => {
@@ -78,13 +78,13 @@ fn main() -> Result<(), std:: io::Error> {
 				_ => break,
 			});
 		},
-		
+
 		Err(e) => return Err(e),
 	});
 	if buffer.len() > 0 {
 		println!("#line: {}", unsafe { std::str::from_utf8_unchecked(&buffer) });
 	}
-	
+
 	Ok(())
 }
 ```
@@ -99,9 +99,9 @@ extern crate cycle_match;
 
 fn main() {
 	let data = b"123456789";
-	
+
 	let mut num = 0usize;
-	
+
 	let mut iter = data.iter();
 	while_match!((iter) -> || {
 		Some(b'0') => {},
@@ -112,7 +112,7 @@ fn main() {
 		Some(a) => panic!("Unk byte: {:?}", a),
 		_ => break
 	});
-	
+
 	assert_eq!(num, 123456789);
 }
 ```
@@ -121,14 +121,10 @@ fn main() {
 */
 
 #![no_std]
+#![allow(clippy::tabs_in_doc_comments)]
 
-#[macro_use]
 mod while_match;
-
-#[macro_use]
 mod for_match;
-
-#[macro_use]
 mod loop_match;
 
 #[doc(hidden)]
@@ -137,20 +133,20 @@ macro_rules! cycle_match {
 	// ext version
 	[@$m_type:tt ($($match_args:tt)+): $(#[$name:tt] {$($ext_data:tt)*}),+ $(,)? ] => {
 		$crate::ext_cycle_match! {
-			@$m_type ($($match_args)+):	
-			
+			@$m_type ($($match_args)+):
+
 			$(
 				#[$name] {$($ext_data)*}
 			)*
 		}
 	};
-	
+
 /*
 	// default version, empty match
 	[@$m_type:tt ($($match_args:tt)+): ] => {
 		compile_error! (
 			concat!("An internal description of the 'match' language construct was expected.
-			
+
 Provided by: \"\"
 
 Expected \"
@@ -166,7 +162,7 @@ Expected \"
 /*
 	// default version, empty version
 	[@$m_type:tt ($($match_args:tt)+): ] => {
-		
+
 	};
 */
 
@@ -182,55 +178,54 @@ Expected \"
 #[macro_export]
 macro_rules! ext_cycle_match {
 	[@$m_type:tt (): ] => {}; //break
-	
+
 	[@$m_type:tt ($($match_args:tt)+):	#[begin] {$($data:tt)*} $($all_data:tt)*] => {{
 		$crate::cycle_match! {
 			@$m_type ($($match_args)+): $($data)*
 		};
-		
+
 		$crate::ext_cycle_match! {
 			@$m_type ():
-			
+
 			$($all_data)*
 		}
 	}};
-	
+
 	[@$m_type:tt ($($match_args:tt)+):	#[insert] {$($data:tt)*} $($all_data:tt)*] => {{
 		{$($data)*};
-		
+
 		$crate::ext_cycle_match! {
 			@$m_type ($($match_args)+):
-			
+
 			$($all_data)*
 		}
 	}};
 }
 
-
-
-
-
 #[doc(hidden)]
 #[macro_export]
-macro_rules! cycle_variables {
-	[ {$($_unk:tt)*} {} {} ] => {};
+macro_rules! init_cycle_vars {
+	[
+		{$($_unk:tt)*} {} {}
+	] => {};
 
-	
-	[ { $($all:tt)* } { $([$($i_next:tt)+])? $(, [$($i:tt)+])* } {$([$($e_next:tt)+])? $(, [$($e:tt)+])*} ] => {
-		
-		$crate::cycle_variables_begin! {
+	[
+		{ $($all:tt)* } 
+		{ $([$($i_next:tt)+])? $(, [$($i:tt)+])* } 
+		{ $([$($e_next:tt)+])? $(, [$($e:tt)+])* } 
+	] => {
+
+		$crate::__init_cycle_vars_init! {
 			{ $($all)* }  [$($($i_next)*)?] {$([$($i)*]),*} : [$($($e_next)+)?] {$([$($e)+]),*}
 		}
 	};
 }
 
-
-
 #[doc(hidden)]
 #[macro_export]
-macro_rules! cycle_variables_begin {	
+macro_rules! __init_cycle_vars_init {
 	[ {$($all_tt:tt)*} [] {} : [] {}] => {}; //break, empty variables
-	
+
 	//error  let _ = $e;
 	[ {$($all_tt:tt)*} [] {$($unk_i:tt)*} : [ $($e:tt)+ ] ] => {
 		//#0
@@ -241,7 +236,7 @@ macro_rules! cycle_variables_begin {
 			)
 		);
 	};
-	
+
 	//error  let e = _;
 	[ {$($all_tt:tt)*} [ $($i2:tt)+ ] {$($unk_i:tt)*} : [] ] => {
 		compile_error!(
@@ -251,86 +246,80 @@ macro_rules! cycle_variables_begin {
 			)
 		);
 	};
-	
-	
-	
-	
+
 	[	{$($all_tt:tt)*}
-		
+
 		[ _ ] {$([$($next_i:tt)*])? $(, [$($unk_i:tt)*])*} : [ $($e:tt)+ ] { $([$($next_e:tt)*])? $(, [$($unk_e:tt)*])* }
-		
+
 	] => {
 		{ $($e)+ };
-		
-		
-		$crate::cycle_variables_begin! {
+
+
+		$crate::__init_cycle_vars_init! {
 			{$($all_tt)*}
-			
+
 			[$($($next_i)*)?] { $([$($unk_i)*]),* } : [$($($next_e)*)?] { $([$($unk_e)*]),* }
 		}
 	};
-	
-	
+
+
 	//fn next
 	[ 	{ $( [$($check:tt)*] )? }
-		
+
 		[ $i:ident ] {$([$($next_i:tt)*])? $(, [$($unk_i:tt)*])*} : [ $($e:tt)+ ] { $([$($next_e:tt)*])? $(, [$($unk_e:tt)*])* }
-		
+
 	] => {
 		{
 			$(
-				$crate::cycle_variable_names_check! {
+				$crate::__init_cycle_varss_name_check! {
 					[$($check)*]:  $i
 				}
 			)?
 		}
-		
+
 		let mut $i = $($e)+;
-		
-		$crate::cycle_variables_begin! {
+
+		$crate::__init_cycle_vars_init! {
 			{ $( [$($check)*] )? }
-			
+
 			[$($($next_i)*)?] { $([$($unk_i)*]),* } : [$($($next_e)*)?] { $([$($unk_e)*]),* }
 		}
 	};
 }
 
-
 #[doc(hidden)]
 #[macro_export]
-macro_rules! cycle_variable_names_check {
-	[ []: $($__ignore:tt)* ] => {}; //break	
-	
-	[ [ {$self_name:ident}  $(, {$next_expr:ident} )* ]:  $i:ident ] => {
-		
-		macro_rules! check_ident_equality {
+macro_rules! __init_cycle_varss_name_check {
+	[ []: $($__ignore:tt)* ] => {}; //break
+
+	[ [ {$self_name:ident}  $(, {$next_expr:ident} )* ]:  $i:ident ] => {{
+		macro_rules! __check_ident_equality {
 			[ ({$self_name} : {$self_name}) -> $ok:block ] => {$ok};
 			[ ({$i} : {$i}) -> $ok:block ] => {$ok};
-			
+
 			[ ({$self_name} : {$self_name}) -> $ok:block else $err:block ] => {$ok};
 			[ ({$i} : {$i}) -> $ok:block else $err:block ] => {$ok};
-			
-			
+
+
 			[ ({$self_name} : {$uunk:tt}) -> $ok:block ] => {};
 			[ ({$self_name} : {$uunk:tt}) -> $ok:block else $err:block ] => {$err};
 		}
-		
-		check_ident_equality! {
+
+		__check_ident_equality! {
 			({$self_name} : {$i}) -> {
 				compile_error!(
 					concat!(
-						"Name conflict, possibly undefined behavior. Call the variable \"", 
+						"Name conflict, possibly undefined behavior. Call the variable \"",
 							stringify!($i) ,"\" something different."
 					)
 				);
 			}else {
-				
+
 			}
 		}
-		
-		$crate::cycle_variable_names_check! {
+
+		$crate::__init_cycle_varss_name_check! {
 			[ $({$next_expr}),* ]: $i
 		}
-	};
+	}};
 }
-
