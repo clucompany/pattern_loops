@@ -274,7 +274,6 @@ macro_rules! __init_cycle_vars_init {
 		{ $( [$($check:tt)*] )? }
 
 		[ $i:ident ] {$([$($next_i:tt)*])? $(, [$($unk_i:tt)*])*} : [ $($e:tt)+ ] { $([$($next_e:tt)*])? $(, [$($unk_e:tt)*])* }
-
 	] => {
 		{
 			$(
